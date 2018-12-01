@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <select id="option">
+        <option id="opt1" value="nom">Nom</option>
+        <option id="opt2" value="codePostal">Code postal</option>
+        <option id="opt3" value="codeDepartement">Code départment</option>
+    </select>
+
+    <input type="text" id="txt">
+
+    <button id="btn"> Rechercher </button>
+
+    <div id="content">
+
+    </div>
+
+<script src="jquery-3.2.1.min.js"></script>
+<script>
+
+
+    $('#btn').click(function(){
+
+        $.ajax({
+            url: "https://geo.api.gouv.fr/communes?"+ $('#option').val() +"=" + $('#txt').val() + "&fields=nom,code,codesPostaux,codeDepartement,codeRegion,population&format=json&geometry=centre",
+            dataType: "json",
+            beforeSend: function()
+            {
+                $("#content").text("Envoi de la requête...");
+            },
+            complete: function(data) {
+                console.log("Reponse recue");
+                var obj = data.responseJSON;
+
+                $("#content").text("");
+                $("#content").append("<ul></ul>");
+
+                for(var i in obj)
+                    $("#content ul").append("<li>" + obj[i].nom + "</i>");
+                },
+                method: "GET",
+            })
+    });
+
+</script>
+</body>
+</html>

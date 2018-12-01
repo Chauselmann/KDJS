@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="btn1">bouton 1</button>
+<button id="btn2">bouton 2</button>
+<img id="img" src="ajax-loader.gif" style="display:none">
+
+<div id="content">
+</div>
+<div class="exo3-b">
+    <input type="text" id="txt">
+    <button type="submit" id="send">Envoyer</button>
+</div>
+
+<div id="exo4">
+</div>
+
+<script src="jquery-3.2.1.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#btn1').click(function () {
+                $('#img').show();
+                setTimeout(function () {
+                    $('#content').load('http://www.labri.fr/perso/pbiasutt/Cours/KDJS/TD02/exo1.php #conteneur1', $('#img').hide())
+                }, 1000);
+            }
+        );
+
+        $('#btn2').click(function () {
+                $('#img').show();
+                setTimeout(function () {
+                    $('#content').load('http://www.labri.fr/perso/pbiasutt/Cours/KDJS/TD02/exo1.php #conteneur2', $('#img').hide())
+                }, 1000);
+            }
+        );
+
+
+        //exercice 3
+        $('#send').click(function(){
+            var value = $('#txt').val();
+            console.log(value);
+            $.ajax({
+                url: 'http://www.labri.fr/perso/pbiasutt/Cours/KDJS/TD02/functions.php', //toujours la même page qui est appelée
+                dataType: "Script",
+                success: function () {
+                    console.log(isPrime(value));
+                }
+            });
+        });
+
+
+        $('#exo4').append("<ul id='data'>");
+        //exercice 4
+        $.ajax({
+            url: 'http://www.labri.fr/perso/pbiasutt/Cours/KDJS/TD02/characters.php',
+            dataType: "Json",
+            success: function(data){
+                data.forEach(function(element){
+                    $('#exo4').append("<li>"+ element.name +"</li>");
+                })
+            }
+        });
+        $('#exo4').append("</ul>");
+})
+
+</script>
+</body>
+</html>

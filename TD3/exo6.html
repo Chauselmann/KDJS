@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Validation de formulaire</title>
+    <!-- Latest compiled and minified CSS --><!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+</head>
+<body ng-controller="AppController">
+
+<div class="container">
+    <form name="form" novalidate>
+        <div class="form-group" ng-class="{'has-error':form.email.$invalid && !form.email.$pristine}">
+            <label>Email *</label>
+            <input type="email" class="form-control" name="email" placeholder="Email" ng-pattern="emailRegex" ng-model="user.email" required>
+            <p class="bg-warning" ng-show="form.email.$invalid && !form.email.$pristine">Le mail doit être de la forme example@example.com</p>
+            <p class="bg-danger" ng-show="form.email.$touched && form.email.$invalid">Champ requis</p>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error':form.password.$invalid && !form.password.$pristine}">
+            <label>Mot de passe *</label>
+            <input type="password" class="form-control" name="password" ng-pattern="passRegex" placeholder="Password" ng-model="password" required>
+            <p class="bg-warning" ng-show="form.password.$invalid && !form.password.$pristine">Le mot de passe doit contenir 4 a 8 caractères dont au moins un chiffre et une lettre </p>
+            <p class="bg-danger" ng-show="form.password.$touched && form.password.$invalid">Champ requis</p>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error':form.passwordRepeat.$invalid && !form.passwordRepeat.$pristine}">
+            <label>Confirmation du mot de passe *</label>
+            <input type="password" class="form-control" name="passwordRepeat" placeholder="Repeat Password" ng-model="passwordRepeat" valid-password-c="password" required>
+            <p class="bg-warning" ng-show="form.passwordRepeat.$error.noMatch" >Les mots de passe ne correspondent pas</p>
+            <p class="bg-danger" ng-show="form.passwordRepeat.$touched && form.passwordRepeat.$invalid">Champ requis</p>
+        </div>
+
+        <button ng-disabled="form.$invalid" type="submit" class="btn btn-succes">S'enregister</button>
+    </form>
+</div>
+
+<script>
+    var myApp = angular.module('myApp',[]);
+
+    myApp.controller('AppController', ['$scope', function($scope) {
+
+        $scope.emailRegex = /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/;  //verification de l'email de type exemple@exemple.fr
+
+        $scope.passRegex = /^(?=.*\d)(?=.*[a-zA-Z]).{4,8}$/; //vérification de l'email 4 à 8 caractères au moins une lettre et un chiffre
+
+    }]);
+
+    myApp.directive('validPasswordC', function() {
+        return {
+            require: 'ngModel',
+            scope: {
+
+                reference: '=validPasswordC'
+
+            },
+            link: function(scope, elm, attrs, ctrl) {
+                ctrl.$parsers.unshift(function(viewValue, $scope) {
+
+                    var noMatch = viewValue != scope.reference
+                    ctrl.$setValidity('noMatch', !noMatch);
+                    return (noMatch)?noMatch:!noMatch;
+                });
+
+                scope.$watch("reference", function(value) {
+                    ctrl.$setValidity('noMatch', value === ctrl.$viewValue);
+
+                });
+            }
+        }
+    });
+
+
+
+
+</script>
+</body>
+</html>
